@@ -1,4 +1,4 @@
-# Vue-Map
+# Vue-Covid-Map
 
 ## Build Setup
 
