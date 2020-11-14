@@ -10,29 +10,29 @@
       class="map"
     >
       <GMapMarker
-        v-for="location in locations"
-        :key="location.countryTerritoryCode"
-        :ref="location.countryTerritoryCode"
-        :position="{ lat: location.lat, lng: location.lng }"
+        v-for="country in countries"
+        :key="country.countryTerritoryCode"
+        :ref="country.countryTerritoryCode"
+        :position="{ lat: country.lat, lng: country.lng }"
         :options="{
           label: {
-            text: location.cases.toString(),
+            text: country.cases.toString(),
             color: 'Black',
             fontWeight: 'bold',
           },
         }"
-        @click="currentLocation = location"
+        @click="countrySelectHandler(country)"
         @mouseover="showInfoWindow"
         @mouseout="closeInfoWindow"
       >
         <GMapInfoWindow :options="{ maxWidth: 200 }">
-          <h5>{{ location.countryAndTerritory | country }}</h5>
+          <h5>{{ country.countryAndTerritory | country }}</h5>
           <section>
             <p>
-              <strong>Death: {{ location.deaths }}</strong>
+              <strong>Death: {{ country.deaths }}</strong>
             </p>
             <p>
-              <strong> Date: {{ location.dateReported | formatDate }} </strong>
+              <strong> Date: {{ country.dateReported | formatDate }} </strong>
             </p>
           </section>
         </GMapInfoWindow>
@@ -44,22 +44,23 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Context } from '@nuxt/types'
-import { LocationData } from '~/utils/interface'
+import { CountryData } from '~/utils/interface'
+import { mapMutations } from 'vuex'
 
 export default Vue.extend({
   name: 'Home',
 
-  async asyncData({ $axios }: Context) {
-    const locations: LocationData[] = await $axios.$get('/api/')
+  async asyncData({ $axios, route }: Context) {
+    const countries: CountryData[] = await $axios.$get('/api/')
 
     return {
-      locations,
+      countries,
     }
   },
 
   data() {
     return {
-      locations: [] as LocationData[],
+      countries: [] as CountryData[],
       center: { lat: 0, lng: 0 },
       currentLocation: {},
       mapStyle: [],
@@ -76,6 +77,8 @@ export default Vue.extend({
   },
 
   methods: {
+    ...mapMutations(['setCountry']),
+
     showInfoWindow(event: any) {
       const infoWindow = event.marker.infoWindow
       infoWindow.open(event.map, event.marker)
@@ -84,6 +87,11 @@ export default Vue.extend({
       const infoWindow = event.marker.infoWindow
       infoWindow.close(event.map, event.marker)
     },
+    countrySelectHandler(country:CountryData) {
+      this.currentLocation = country
+      this.setCountry(country)
+      this.$router.push('/grid')
+    }
   },
 
   mounted() {},

@@ -3,8 +3,7 @@ export default function ({ $axios, redirect }) {
     code: 'lVaq5edaxcRSjG5fvbbp/tUOH9URt4Q5sA5MfMOZ4/Y1qpBQqdYSHg=='
   }
 
-  $axios.onRequest((config) => {
-    // config.url = config.url + defaultQueryString
-    console.log('Making request to ' + config.url)
-  })
+  // $axios.onRequest((config) => {
+  //   console.log('Making request to ' + config.url)
+  // })
 }

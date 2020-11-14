@@ -1,64 +1,87 @@
 <template>
-  <div>
-    <b-table
-      responsive
-      striped
-      hover
-      :busy="isBusy"
-      :items="locations"
-      :fields="fields"
-      :per-page="perPage"
-      :current-page="currentPage"
-    >
-      <template #table-busy>
-        <div class="text-center text-danger my-2">
-          <b-spinner class="align-middle"></b-spinner>
-          <strong>Loading...</strong>
-        </div>
-      </template>
-    </b-table>
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="rows"
-      :per-page="perPage"
-      aria-controls="my-table"
-    ></b-pagination>
+  <div class="grid">
+    <div class="table-container">
+      <b-table
+        responsive
+        striped
+        hover
+        :busy="isBusy"
+        :items="countries"
+        :fields="fields"
+        :per-page="perPage"
+        primary-key="countryTerritoryCode"
+        id="table"
+        class="table"
+        ref="table"
+      >
+        <template #table-busy>
+          <div class="text-center text-danger my-2">
+            <b-spinner class="align-middle"></b-spinner>
+            <strong>Loading...</strong>
+          </div>
+        </template>
+      </b-table>
+    </div>
+    <div class="pagination-container">
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        aria-controls="my-table"
+      ></b-pagination>
+      <button @click="loadData">Test</button>
+    </div>
   </div>
 </template>
 
 <script lang='ts'>
 import Vue from 'vue'
 import dayjs from 'dayjs'
-import { LocationData } from '~/utils/interface'
+import { CountryData } from '~/utils/interface'
+import { mapMutations, mapState } from 'vuex'
 
 export default Vue.extend({
   name: 'Grid',
 
-  async asyncData({ $axios }) {
+  async asyncData({ $axios, route, store }) {
     let isBusy: boolean = true
     let currentPage: number = 1
-    let perPage: number = 25
+    let perPage: number = 212
 
-    const locations: LocationData[] = await $axios.$get('/api/', {
-      params: {
-        page: currentPage,
-        pageSize: perPage
-      }
+    const countries: CountryData[] = await $axios.$get('/api/', {
+      // params: {
+      //   page: currentPage,
+      //   pageSize: perPage,
+      // },
     })
     isBusy = false
 
+    // check if any country has been selected from map
+    const country: CountryData = store.state.country
+
     return {
       isBusy,
-      locations,
+      countries,
+      country,
     }
+  },
+
+  mounted() {
+    // jump to selected country
+    console.log('country selected:', this.country)
+    setTimeout(() => {
+      this.scrollToRow(this.country)
+    }, 500);
+    
   },
 
   data() {
     return {
       isBusy: false,
       currentPage: 1,
-      perPage: 25,
-      locations: [] as LocationData[],
+      perPage: 212,
+      country: {} as CountryData,
+      countries: [] as CountryData[],
       fields: [
         {
           key: 'countryTerritoryCode',
@@ -100,15 +123,60 @@ export default Vue.extend({
 
   computed: {
     rows(): number {
-      return this.locations.length
+      return this.countries.length > 200 ? this.countries.length : 200
     },
   },
 
   methods: {
-    refreshData() {},
+    async loadData() {
+      this.isBusy = true
+      this.countries = await this.$axios.$get('/api/', {
+        params: {
+          page: this.currentPage,
+          pageSize: this.perPage,
+        },
+      })
+
+      this.isBusy = false
+    },
+    scrollToRow(country: CountryData) {
+      const rowId = `#table__row_${country.countryTerritoryCode}`
+      // const testId = '#table__row_BGR'
+
+      const table: any = this.$refs.table
+      const tbody: any = table.$el.querySelector('tbody')
+      const row: any = tbody.querySelector(rowId)
+      if (row) {
+        row.scrollIntoView()
+      }
+      console.log('row find:', row)
+    },
+  },
+
+  watch: {
+    currentPage() {
+      this.loadData()
+    },
   },
 })
 </script>
 
-<style lang='less'>
+<style scoped lang='less'>
+.grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.table-container {
+  display: flex;
+  flex: 1;
+  width: 80%;
+
+  .table {
+    flex: 1;
+  }
+}
+.pagination-container {
+  flex: 1;
+}
 </style>
