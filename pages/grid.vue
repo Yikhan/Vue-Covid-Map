@@ -9,6 +9,7 @@
         :items="countries"
         :fields="fields"
         :per-page="perPage"
+        :tbody-tr-class="rowClass"
         primary-key="countryTerritoryCode"
         id="table"
         class="table"
@@ -29,7 +30,6 @@
         :per-page="perPage"
         aria-controls="my-table"
       ></b-pagination>
-      <button @click="loadData">Test</button>
     </div>
   </div>
 </template>
@@ -63,6 +63,8 @@ export default Vue.extend({
       isBusy,
       countries,
       country,
+      currentPage,
+      perPage
     }
   },
 
@@ -71,15 +73,14 @@ export default Vue.extend({
     console.log('country selected:', this.country)
     setTimeout(() => {
       this.scrollToRow(this.country)
-    }, 500);
-    
+    }, 500)
   },
 
   data() {
     return {
       isBusy: false,
-      currentPage: 1,
-      perPage: 212,
+      currentPage: null,
+      perPage: null,
       country: {} as CountryData,
       countries: [] as CountryData[],
       fields: [
@@ -147,9 +148,24 @@ export default Vue.extend({
       const tbody: any = table.$el.querySelector('tbody')
       const row: any = tbody.querySelector(rowId)
       if (row) {
-        row.scrollIntoView()
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }
       console.log('row find:', row)
+    },
+    rowClass(item: CountryData, type: string) {
+      if (!item || type !== 'row') return
+      if (!this.country) return
+
+      if (
+        (item.countryTerritoryCode &&
+          item.countryTerritoryCode === this.country.countryTerritoryCode) ||
+        (item.countryAndTerritory &&
+          item.countryAndTerritory === this.country.countryAndTerritory)
+      ) {
+        return 'table-success'
+      } else {
+        return
+      }
     },
   },
 

@@ -5,4 +5,6 @@ export interface CountryData {
   countryTerritoryCode: string
   countryAndTerritory: string
   dateReported: string | Date
+  selected?: boolean
 }
+

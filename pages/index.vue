@@ -4,9 +4,9 @@
       ref="gMap"
       language="en"
       :cluster="{ options: { styles: clusterStyle } }"
-      :center="center"
-      :options="{ styles: mapStyle }"
-      :zoom="1.5"
+      :center="currentLocation"
+      :options="{ styles: mapStyles }"
+      :zoom="currentLocation.selected ? 4 : 1.5"
       class="map"
     >
       <GMapMarker
@@ -17,7 +17,7 @@
         :options="{
           label: {
             text: country.cases.toString(),
-            color: 'Black',
+            color: 'White',
             fontWeight: 'bold',
           },
         }"
@@ -32,7 +32,7 @@
               <strong>Death: {{ country.deaths }}</strong>
             </p>
             <p>
-              <strong> Date: {{ country.dateReported | formatDate }} </strong>
+              <strong>Date: {{ country.dateReported | formatDate }}</strong>
             </p>
           </section>
         </GMapInfoWindow>
@@ -43,16 +43,20 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapMutations } from 'vuex'
 import { Context } from '@nuxt/types'
 import { CountryData } from '~/utils/interface'
-import { mapMutations } from 'vuex'
+import useLocalStorage from '~/utils/useLocalStorage'
+import mapStyles from '~/assets/styles/mapStyles'
+
+const storage = useLocalStorage()
+const COUNTRY_KEY = 'country'
 
 export default Vue.extend({
   name: 'Home',
 
   async asyncData({ $axios, route }: Context) {
     const countries: CountryData[] = await $axios.$get('/api/')
-
     return {
       countries,
     }
@@ -61,9 +65,9 @@ export default Vue.extend({
   data() {
     return {
       countries: [] as CountryData[],
-      center: { lat: 0, lng: 0 },
-      currentLocation: {},
-      mapStyle: [],
+      country: {} as CountryData,
+      currentLocation: { lat: 0, lng: 0 } as CountryData,
+      mapStyles,
       clusterStyle: [
         {
           url:
@@ -87,14 +91,23 @@ export default Vue.extend({
       const infoWindow = event.marker.infoWindow
       infoWindow.close(event.map, event.marker)
     },
-    countrySelectHandler(country:CountryData) {
+    countrySelectHandler(country: CountryData) {
       this.currentLocation = country
       this.setCountry(country)
+      storage.setItem(COUNTRY_KEY, country)
       this.$router.push('/grid')
-    }
+    },
+    getCountryFromLocal() {
+      this.country = storage.getItem(COUNTRY_KEY) as CountryData
+      this.currentLocation = this.country
+      this.currentLocation.selected = true
+    },
   },
 
-  mounted() {},
+  mounted() {
+    this.getCountryFromLocal()
+    
+  },
 })
 </script>
 
@@ -103,8 +116,8 @@ export default Vue.extend({
   display: flex;
   .map {
     flex: 1;
-    height: 450px;
-    width: 800px;
+    max-width: 1980px;
+    max-height: 1280px;
   }
 }
 </style>
