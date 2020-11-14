@@ -3,7 +3,7 @@
     <GMap
       ref="gMap"
       language="en"
-      :cluster="{ options: { styles: clusterStyle } }"
+      :cluster="{ options: { styles: clusterStyles } }"
       :center="currentLocation"
       :options="{ styles: mapStyles }"
       :zoom="currentLocation.selected ? 4 : 1.5"
@@ -20,6 +20,7 @@
             color: 'White',
             fontWeight: 'bold',
           },
+          icon: require('~/assets/virus.svg')
         }"
         @click="countrySelectHandler(country)"
         @mouseover="showInfoWindow"
@@ -48,6 +49,7 @@ import { Context } from '@nuxt/types'
 import { CountryData } from '~/utils/interface'
 import useLocalStorage from '~/utils/useLocalStorage'
 import mapStyles from '~/assets/styles/mapStyles'
+import clusterStyles from '~/assets/styles/clusterStyles'
 
 const storage = useLocalStorage()
 const COUNTRY_KEY = 'country'
@@ -68,15 +70,7 @@ export default Vue.extend({
       country: {} as CountryData,
       currentLocation: { lat: 0, lng: 0 } as CountryData,
       mapStyles,
-      clusterStyle: [
-        {
-          url:
-            'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m3.png',
-          width: 56,
-          height: 56,
-          textColor: '#fff',
-        },
-      ],
+      clusterStyles
     }
   },
 
