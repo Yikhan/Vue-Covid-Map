@@ -8,25 +8,15 @@ export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
     title: 'Vue-Map',
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' }
-    ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    meta: [ { charset: 'utf-8' }, { name: 'viewport', content: 'width=device-width, initial-scale=1' }, { hid: 'description', name: 'description', content: '' } ],
+    link: [ { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' } ]
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: [
-  ],
+  css: [],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [
-    '~/plugins/request.js',
-    '~/plugins/filter.js',
-  ],
+  plugins: [ '~/plugins/filter', '~/plugins/request' ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
@@ -43,23 +33,28 @@ export default {
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    ['nuxt-gmaps', {
-      key: 'AIzaSyCBpCpbsH7DubG7nNClJNVRtHXghe_a2BU',
-      //you can use libraries: ['places']
-    }]
+    [
+      'nuxt-gmaps',
+      {
+        key: 'AIzaSyCBpCpbsH7DubG7nNClJNVRtHXghe_a2BU'
+        //you can use libraries: ['places']
+      }
+    ]
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    proxy: true
+    proxy: true,
+    debug: true
   },
 
   proxy: {
-    '/api/': { target: 'https://func-frontendtestaf.azurewebsites.net/api/get-data?code=lVaq5edaxcRSjG5fvbbp/tUOH9URt4Q5sA5MfMOZ4/Y1qpBQqdYSHg==', pathRewrite: {'^/api/': ''} }
+    '/api/': {
+      target: 'https://func-frontendtestaf.azurewebsites.net/api/get-data',
+      pathRewrite: { '^/api/': '' }
+    }
   },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
-  build: {
-    transpile: [/^vue2-google-maps($|\/)/]
-  }
+  build: {}
 }

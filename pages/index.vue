@@ -14,19 +14,25 @@
         :key="location.countryTerritoryCode"
         :ref="location.countryTerritoryCode"
         :position="{ lat: location.lat, lng: location.lng }"
-        :options="{ label: location.cases.toString() }"
+        :options="{
+          label: {
+            text: location.cases.toString(),
+            color: 'Black',
+            fontWeight: 'bold',
+          },
+        }"
         @click="currentLocation = location"
         @mouseover="showInfoWindow"
         @mouseout="closeInfoWindow"
       >
-        <GMapInfoWindow
-          :options="{ maxWidth: 200 }"
-        >
-          <h5>{{ location.countryAndTerritory }}</h5>
+        <GMapInfoWindow :options="{ maxWidth: 200 }">
+          <h5>{{ location.countryAndTerritory | country }}</h5>
           <section>
-            <p>Death: {{ location.deaths }}</p>
             <p>
-              Date: {{ `${location.day}-${location.month}-${location.year}` }}
+              <strong>Death: {{ location.deaths }}</strong>
+            </p>
+            <p>
+              <strong> Date: {{ location.dateReported | formatDate }} </strong>
             </p>
           </section>
         </GMapInfoWindow>
@@ -36,16 +42,9 @@
 </template>
 
 <script lang="ts">
-import '@nuxtjs/axios'
-import { Context } from '@nuxt/types'
 import Vue from 'vue'
-
-interface LocationData {
-  lat: number
-  lng: number
-  cases: string
-  countryTerritoryCode: string
-}
+import { Context } from '@nuxt/types'
+import { LocationData } from '~/utils/interface'
 
 export default Vue.extend({
   name: 'Home',
@@ -77,19 +76,17 @@ export default Vue.extend({
   },
 
   methods: {
-    showInfoWindow(event:any) {
+    showInfoWindow(event: any) {
       const infoWindow = event.marker.infoWindow
       infoWindow.open(event.map, event.marker)
     },
-    closeInfoWindow(event:any) {
+    closeInfoWindow(event: any) {
       const infoWindow = event.marker.infoWindow
       infoWindow.close(event.map, event.marker)
-    }
+    },
   },
 
-  mounted() {
-    
-  },
+  mounted() {},
 })
 </script>
 
