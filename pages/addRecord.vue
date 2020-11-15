@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-      <b-form-group id="input-group-1" label="Country Name:" label-for="input-1">
+      <b-form-group label="Country Name:" label-for="input-country-name">
         <b-form-input
-          id="input-1"
+          id="input-country-name"
           v-model="form.countryName"
           type="text"
           required
@@ -11,36 +11,72 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-2" label="Country Code:" label-for="input-2">
+      <b-form-group label="Country Code:" label-for="input-country-code">
         <b-form-input
-          id="input-2"
+          id="input-country-code"
           v-model="form.countryCode"
+          type="text"
           required
           placeholder="Code of country"
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-3" label="Longitude:" label-for="input-3">
-        <b-form-input id="input-3" v-model="form.lat" required placeholder="Longitude: 0"></b-form-input>
+      <b-form-group label="Longitude:" label-for="input-lng">
+        <b-form-input
+          id="input-lng"
+          v-model="form.lat"
+          type="number"
+          step="0.000001"
+          required
+          placeholder="Longitude: 0"
+        ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-4" label="Latitude:" label-for="input-4">
-        <b-form-input id="input-4" v-model="form.lng" required placeholder="Latitude: 0"></b-form-input>
+      <b-form-group label="Latitude:" label-for="input-lat">
+        <b-form-input
+          id="input-lat"
+          v-model="form.lng"
+          type="number"
+          step="0.000001"
+          required
+          placeholder="Latitude: 0"
+        ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-5" label="Cases:" label-for="input-5">
-        <b-form-input id="input-5" v-model="form.cases" required placeholder="Total covid cases"></b-form-input>
+      <b-form-group label="Cases:" label-for="input-cases">
+        <b-form-input
+          id="input-cases"
+          v-model="form.cases"
+          type="number"
+          required
+          placeholder="Total covid cases"
+        ></b-form-input>
       </b-form-group>
-      <b-form-group id="input-group-6" label="Deaths:" label-for="input-6">
-        <b-form-input id="input-6" v-model="form.deaths" required placeholder="Total deaths"></b-form-input>
+
+      <b-form-group label="Deaths:" label-for="input-deaths">
+        <b-form-input
+          id="input-deaths"
+          v-model="form.deaths"
+          type="number"
+          required
+          placeholder="Total deaths"
+        ></b-form-input>
       </b-form-group>
+
       <b-form-group
-        id="input-group-7"
         label="Cumulative Number For 14 Days Per Million Population:"
-        label-for="input-7"
+        label-for="input-cumulative"
       >
-        <b-form-input id="input-7" v-model="form.cumulative" required placeholder="Total number"></b-form-input>
+        <b-form-input
+          id="input-cumulative"
+          v-model="form.cumulative"
+          type="number"
+          step="0.000001"
+          required
+          placeholder="Total number"
+        ></b-form-input>
       </b-form-group>
+
       <b-form-group>
         <label for="datepicker">Date Reported</label>
         <b-form-datepicker id="datepicker" v-model="form.date" class="mb-2"></b-form-datepicker>

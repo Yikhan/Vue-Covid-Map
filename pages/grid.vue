@@ -246,7 +246,6 @@ export default Vue.extend({
   .pagination-container {
     display: flex;
     flex-direction: row;
-
     flex: 1;
     .pageination {
       flex: 1;
@@ -257,6 +256,7 @@ export default Vue.extend({
   }
   .mode-container {
     flex: 1;
+    margin: 10px auto;
   }
 }
 </style>
