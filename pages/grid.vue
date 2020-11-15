@@ -1,12 +1,22 @@
 <template>
   <div class="grid">
+    <div class="search">
+      <b-input-group prepend="Search">
+        <b-form-input
+          v-model="search"
+          placeholder="key word to search"
+          @input="searchHandler"
+          debounce="500"
+        ></b-form-input>
+      </b-input-group>
+    </div>
     <div class="table-container">
       <b-table
         responsive
         striped
         hover
         :busy="isBusy"
-        :items="countries"
+        :items="search ? countriesFiltered : countries"
         :fields="fields"
         :per-page="perPage"
         :tbody-tr-class="rowClass"
@@ -95,6 +105,8 @@ export default Vue.extend({
       perPage: 25,
       country: {} as CountryData,
       countries: [] as CountryData[],
+      countriesFiltered: [] as CountryData[],
+      search: '',
       fields: [
         {
           key: 'countryTerritoryCode',
@@ -143,22 +155,19 @@ export default Vue.extend({
   methods: {
     async loadData() {
       this.isBusy = true
-      this.countries = await this.$axios.$get('/api/', {
-        params: {
-          page: this.currentPage,
-          pageSize: this.perPage
-        }
+      this.countries = await getPagedRecords(this.$axios, {
+        page: this.currentPage,
+        pageSize: this.perPage
       })
 
       this.isBusy = false
     },
     scrollToRow(country: CountryData) {
       const rowId = `#table__row_${country.countryTerritoryCode}`
-      // const testId = '#table__row_BGR'
-
       const table: any = this.$refs.table
       const tbody: any = table.$el.querySelector('tbody')
       const row: any = tbody.querySelector(rowId)
+
       if (row) {
         row.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }
@@ -183,6 +192,20 @@ export default Vue.extend({
       this.currentPage = 1
       this.perPage = 25
       this.loadData()
+    },
+    searchHandler(value: string) {
+      console.log('search trigger')
+
+      let keyword: string = value.trim().toLowerCase()
+      this.countriesFiltered = this.countries.filter((c: CountryData) => {
+        return (
+          c.countryTerritoryCode.toLowerCase().includes(keyword) ||
+          c.countryAndTerritory.toLowerCase().includes(keyword) ||
+          c.cases.toString().includes(keyword) ||
+          c.deaths.toString().includes(keyword) ||
+          c.cumulativeNumberFor14DaysPer100000.toString().includes(keyword)
+        )
+      })
     }
   },
 
@@ -199,20 +222,24 @@ export default Vue.extend({
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.table-container {
-  display: flex;
-  flex: 1;
-  width: 80%;
+  .search {
+    flex: 1;
+    margin: 30px auto;
+  }
+  .table-container {
+    display: flex;
+    flex: 1;
+    width: 80%;
 
-  .table {
+    .table {
+      flex: 1;
+    }
+  }
+  .pagination-container {
     flex: 1;
   }
-}
-.pagination-container {
-  flex: 1;
-}
-.mode-container {
-  flex: 1;
+  .mode-container {
+    flex: 1;
+  }
 }
 </style>
