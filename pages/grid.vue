@@ -35,11 +35,13 @@
     </div>
     <div class="pagination-container">
       <b-pagination
+        class="pagination"
         v-model="currentPage"
         :total-rows="rows"
         :per-page="perPage"
         aria-controls="my-table"
       ></b-pagination>
+      <b-form-select class="page-option" v-model="perPage" :options="perPageOptions" required></b-form-select>
     </div>
     <div class="mode-container">
       <b-button variant="success" @click="usePagination">Pagination Mode</b-button>
@@ -89,7 +91,7 @@ export default Vue.extend({
   },
 
   mounted() {
-    // jump to selected country
+    // scroll to selected country
     console.log('country selected:', this.country)
     if (this.country.selected) {
       setTimeout(() => {
@@ -107,6 +109,7 @@ export default Vue.extend({
       countries: [] as CountryData[],
       countriesFiltered: [] as CountryData[],
       search: '',
+      perPageOptions: [25, 50, 100],
       fields: [
         {
           key: 'countryTerritoryCode',
@@ -212,6 +215,11 @@ export default Vue.extend({
   watch: {
     currentPage() {
       this.loadData()
+    },
+
+    perPage() {
+      this.currentPage = 1
+      this.loadData()
     }
   }
 })
@@ -236,7 +244,16 @@ export default Vue.extend({
     }
   }
   .pagination-container {
+    display: flex;
+    flex-direction: row;
+
     flex: 1;
+    .pageination {
+      flex: 1;
+    }
+    .page-option {
+      margin-left: 20px;
+    }
   }
   .mode-container {
     flex: 1;
