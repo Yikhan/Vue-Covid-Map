@@ -1,3 +1,5 @@
+import { GOOGLE_MAP_API_KEY } from './api_key'
+
 export default {
   // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)
   ssr: false,
@@ -36,7 +38,7 @@ export default {
     [
       'nuxt-gmaps',
       {
-        key: 'AIzaSyCBpCpbsH7DubG7nNClJNVRtHXghe_a2BU'
+        key: GOOGLE_MAP_API_KEY
       }
     ]
   ],
