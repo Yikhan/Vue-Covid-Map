@@ -95,6 +95,7 @@
 <script lang='ts'>
 import Vue from 'vue'
 import { createRecord } from '~/api'
+import { randomInt, randomFloat } from '~/utils/tools'
 import dayjs from 'dayjs'
 
 export default Vue.extend({
@@ -152,24 +153,16 @@ export default Vue.extend({
       })
     },
     onGenerate(evt: any) {
-      this.form.countryName = 'A New Country ' + this.randomInt(0, 1000)
+      this.form.countryName = 'A New Country ' + randomInt(0, 1000)
       this.form.countryCode = 'AAA'
-      this.form.lat = this.randomFloat(-90, 90, 6)
-      this.form.lng = this.randomFloat(-180, 180, 6)
-      this.form.deaths = this.randomInt(0, 5000)
-      this.form.cases = this.randomInt(
+      this.form.lat = randomFloat(-90, 90, 6)
+      this.form.lng = randomFloat(-180, 180, 6)
+      this.form.deaths = randomInt(0, 5000)
+      this.form.cases = randomInt(
         this.form.deaths,
-        this.form.deaths + this.randomInt(0, 10000)
+        this.form.deaths + randomInt(0, 10000)
       )
-      this.form.cumulative = this.randomFloat(0, 100, 2)
-    },
-    randomInt(min: number, max: number): number {
-      let num = Math.random() * (max - min + 1) + min
-      return Math.floor(num)
-    },
-    randomFloat(min: number, max: number, digits: number = 6): number {
-      let num = Math.random() * (max - min + 1) + min
-      return parseFloat(num.toFixed(digits))
+      this.form.cumulative = randomFloat(0, 100, 2)
     }
   }
 })
