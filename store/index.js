@@ -1,3 +1,5 @@
+import { SET_COUNTRY } from './types'
+
 export const state = () => {
   return {
     country: {}
@@ -5,7 +7,7 @@ export const state = () => {
 }
 
 export const mutations = {
-  setCountry (state, country) {
+  [SET_COUNTRY] (state, country) {
     state.country = country
   }
 }

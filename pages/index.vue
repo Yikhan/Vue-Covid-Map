@@ -47,13 +47,11 @@
     </div>
 
     <div class="buttons">
-      <b-button 
-        variant="success" 
+      <b-button
+        variant="success"
         @click="countryResetHandler"
         :disabled="resetButtonDisable"
-      >
-          Reset Selection
-      </b-button>
+      >Reset Selection</b-button>
     </div>
   </div>
 </template>
@@ -65,6 +63,7 @@ import { Context } from '@nuxt/types'
 import { CountryData } from '~/utils/interface'
 import { getAllRecords } from '~/api'
 import { isCountry } from '~/utils/tools'
+import { SET_COUNTRY } from '~/store/types'
 import useLocalStorage from '~/utils/useLocalStorage'
 import mapStyles from '~/assets/styles/mapStyles'
 import clusterStyles from '~/assets/styles/clusterStyles'
@@ -99,7 +98,7 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapMutations(['setCountry']),
+    ...mapMutations([SET_COUNTRY]),
 
     showInfoWindow(event: any) {
       const infoWindow = event.marker.infoWindow
@@ -125,7 +124,7 @@ export default Vue.extend({
     countrySelectHandler(country: CountryData) {
       country.selected = true
       this.setCurrentLocation(country)
-      this.setCountry(country)
+      this[SET_COUNTRY](country)
       storage.setItem(COUNTRY_KEY, country)
       this.$router.push('/grid')
     },
@@ -135,7 +134,7 @@ export default Vue.extend({
 
       // remove country from store
       if (isCountry(this.country)) {
-        this.setCountry({})
+        this[SET_COUNTRY]({})
       }
 
       this.currentLocation = {
