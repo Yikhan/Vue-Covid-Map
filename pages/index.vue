@@ -31,7 +31,7 @@
           @mouseover="showInfoWindow"
           @mouseout="closeInfoWindow"
         >
-          <GMapInfoWindow :options="{ maxWidth: 200 }">
+          <GMapInfoWindow :options="{ maxWidth: 200 }" class="info">
             <h5>{{ country.countryAndTerritory | country }}</h5>
             <section>
               <p>
@@ -155,9 +155,13 @@ export default Vue.extend({
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: 'Goldman', cursive;
   .title {
     flex: 1;
     margin: 50px auto;
+  }
+  .info {
+    font-family: 'Goldman', cursive;
   }
 }
 .container {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="dark" variant="dark">
+    <b-navbar toggleable="lg" type="dark" variant="dark" class="navigation">
       <b-navbar-brand>
         <nuxt-link class="nav-link title" to="/" exact>Covid-19 Data Playground</nuxt-link>
       </b-navbar-brand>
@@ -33,7 +33,10 @@ export default Vue.extend({})
 </script>
 
 <style lang="less" scoped>
-.title {
-  color: whitesmoke;
+.navigation {
+  font-family: 'Goldman', cursive;
+  .title {
+    color: whitesmoke;
+  }
 }
 </style>
