@@ -1,20 +1,25 @@
 <template>
-  <div class="container">
-    <GMap
-      ref="gMap"
-      language="en"
-      :cluster="{ options: { styles: clusterStyles } }"
-      :center="currentLocation"
-      :options="{ styles: mapStyles }"
-      :zoom="currentLocation.selected ? 4 : 1.5"
-      class="map"
-    >
-      <GMapMarker
-        v-for="country in countries"
-        :key="country.countryTerritoryCode"
-        :ref="country.countryTerritoryCode"
-        :position="{ lat: country.lat, lng: country.lng }"
-        :options="{
+  <div class="index-page">
+    <div class="title">
+      <h2>Covid-19 Data Map</h2>
+    </div>
+
+    <div class="container">
+      <GMap
+        ref="gMap"
+        language="en"
+        :cluster="{ options: { styles: clusterStyles } }"
+        :center="currentLocation"
+        :options="{ styles: mapStyles }"
+        :zoom="currentLocation.selected ? 4 : 1.5"
+        class="map"
+      >
+        <GMapMarker
+          v-for="country in countries"
+          :key="country.countryTerritoryCode"
+          :ref="country.countryTerritoryCode"
+          :position="{ lat: country.lat, lng: country.lng }"
+          :options="{
           label: {
             text: country.cases.toString(),
             color: 'White',
@@ -22,23 +27,24 @@
           },
           icon: require('~/assets/virus.svg')
         }"
-        @click="countrySelectHandler(country)"
-        @mouseover="showInfoWindow"
-        @mouseout="closeInfoWindow"
-      >
-        <GMapInfoWindow :options="{ maxWidth: 200 }">
-          <h5>{{ country.countryAndTerritory | country }}</h5>
-          <section>
-            <p>
-              <strong>Death: {{ country.deaths }}</strong>
-            </p>
-            <p>
-              <strong>Date: {{ country.dateReported | formatDate }}</strong>
-            </p>
-          </section>
-        </GMapInfoWindow>
-      </GMapMarker>
-    </GMap>
+          @click="countrySelectHandler(country)"
+          @mouseover="showInfoWindow"
+          @mouseout="closeInfoWindow"
+        >
+          <GMapInfoWindow :options="{ maxWidth: 200 }">
+            <h5>{{ country.countryAndTerritory | country }}</h5>
+            <section>
+              <p>
+                <strong>Death: {{ country.deaths }}</strong>
+              </p>
+              <p>
+                <strong>Date: {{ country.dateReported | formatDate }}</strong>
+              </p>
+            </section>
+          </GMapInfoWindow>
+        </GMapMarker>
+      </GMap>
+    </div>
   </div>
 </template>
 
@@ -47,6 +53,7 @@ import Vue from 'vue'
 import { mapMutations } from 'vuex'
 import { Context } from '@nuxt/types'
 import { CountryData } from '~/utils/interface'
+import { getAllRecords } from '~/api'
 import useLocalStorage from '~/utils/useLocalStorage'
 import mapStyles from '~/assets/styles/mapStyles'
 import clusterStyles from '~/assets/styles/clusterStyles'
@@ -58,9 +65,9 @@ export default Vue.extend({
   name: 'Home',
 
   async asyncData({ $axios, route }: Context) {
-    const countries: CountryData[] = await $axios.$get('/api/')
+    const countries: CountryData[] = await getAllRecords($axios)
     return {
-      countries,
+      countries
     }
   },
 
@@ -87,6 +94,7 @@ export default Vue.extend({
     },
     countrySelectHandler(country: CountryData) {
       this.currentLocation = country
+      country.selected = true
       this.setCountry(country)
       storage.setItem(COUNTRY_KEY, country)
       this.$router.push('/grid')
@@ -95,17 +103,25 @@ export default Vue.extend({
       this.country = storage.getItem(COUNTRY_KEY) as CountryData
       this.currentLocation = this.country
       this.currentLocation.selected = true
-    },
+    }
   },
 
   mounted() {
     this.getCountryFromLocal()
-    
-  },
+  }
 })
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
+.index-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .title {
+    flex: 1;
+    margin: 50px auto;
+  }
+}
 .container {
   display: flex;
   .map {

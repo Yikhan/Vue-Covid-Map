@@ -31,12 +31,16 @@
         aria-controls="my-table"
       ></b-pagination>
     </div>
+    <div class="mode-container">
+      <b-button variant="success" @click="usePagination">Pagination Mode</b-button>
+    </div>
   </div>
 </template>
 
 <script lang='ts'>
 import Vue from 'vue'
 import dayjs from 'dayjs'
+import { getAllRecords, getPagedRecords } from '~/api'
 import { CountryData } from '~/utils/interface'
 import { mapMutations, mapState } from 'vuex'
 
@@ -46,18 +50,24 @@ export default Vue.extend({
   async asyncData({ $axios, route, store }) {
     let isBusy: boolean = true
     let currentPage: number = 1
-    let perPage: number = 212
-
-    const countries: CountryData[] = await $axios.$get('/api/', {
-      // params: {
-      //   page: currentPage,
-      //   pageSize: perPage,
-      // },
-    })
-    isBusy = false
+    let perPage: number = 25
 
     // check if any country has been selected from map
     const country: CountryData = store.state.country
+
+    let countries: CountryData[]
+    if (country.selected) {
+      countries = await getAllRecords($axios)
+      currentPage = 1
+      perPage = countries.length
+    } else {
+      countries = await getPagedRecords($axios, {
+        page: currentPage,
+        pageSize: perPage
+      })
+    }
+
+    isBusy = false
 
     return {
       isBusy,
@@ -71,61 +81,63 @@ export default Vue.extend({
   mounted() {
     // jump to selected country
     console.log('country selected:', this.country)
-    setTimeout(() => {
-      this.scrollToRow(this.country)
-    }, 500)
+    if (this.country.selected) {
+      setTimeout(() => {
+        this.scrollToRow(this.country)
+      }, 500)
+    }
   },
 
   data() {
     return {
       isBusy: false,
-      currentPage: null,
-      perPage: null,
+      currentPage: 1,
+      perPage: 25,
       country: {} as CountryData,
       countries: [] as CountryData[],
       fields: [
         {
           key: 'countryTerritoryCode',
-          sortable: true,
+          sortable: true
         },
         {
           key: 'countryAndTerritory',
           sortable: true,
           formatter: (value: string) => {
             return value.replace(/_/g, ' ')
-          },
+          }
         },
         {
           key: 'cases',
-          sortable: true,
+          sortable: true
         },
         {
           key: 'deaths',
-          sortable: true,
+          sortable: true
         },
         {
           key: 'cumulativeNumberFor14DaysPer100000',
-          label: 'Cumlative Number For 14 Days Per Million',
+          label: 'Cumulative Number For 14 Days Per Million',
           sortable: true,
           formatter: (value: string): string => {
             return parseFloat(value).toFixed(2)
-          },
+          }
         },
         {
           key: 'dateReported',
           sortable: true,
           formatter: (value: string): string => {
             return dayjs(value).format('DD/MM/YYYY')
-          },
-        },
-      ],
+          }
+        }
+      ]
     }
   },
 
   computed: {
     rows(): number {
       return this.countries.length > 200 ? this.countries.length : 200
-    },
+    }
   },
 
   methods: {
@@ -134,8 +146,8 @@ export default Vue.extend({
       this.countries = await this.$axios.$get('/api/', {
         params: {
           page: this.currentPage,
-          pageSize: this.perPage,
-        },
+          pageSize: this.perPage
+        }
       })
 
       this.isBusy = false
@@ -167,13 +179,18 @@ export default Vue.extend({
         return
       }
     },
+    usePagination() {
+      this.currentPage = 1
+      this.perPage = 25
+      this.loadData()
+    }
   },
 
   watch: {
     currentPage() {
       this.loadData()
-    },
-  },
+    }
+  }
 })
 </script>
 
@@ -193,6 +210,9 @@ export default Vue.extend({
   }
 }
 .pagination-container {
+  flex: 1;
+}
+.mode-container {
   flex: 1;
 }
 </style>
