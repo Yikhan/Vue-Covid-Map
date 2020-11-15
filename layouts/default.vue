@@ -1,7 +1,9 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="dark" variant="dark">
-      <b-navbar-brand href="#">Covid-19 Data Playground</b-navbar-brand>
+      <b-navbar-brand>
+        <nuxt-link class="nav-link title" to="/" exact>Covid-19 Data Playground</nuxt-link>
+      </b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -31,5 +33,8 @@ import Vue from 'vue'
 export default Vue.extend({})
 </script>
 
-<style>
+<style lang="less" scoped>
+.title {
+  color: whitesmoke
+}
 </style>

@@ -1,6 +1,6 @@
 export interface CountryData {
-  lat: number | string
-  lng: number | string
+  lat: number
+  lng: number
   cases: number | string
   deaths: number | string
   cumulativeNumberFor14DaysPer100000: number | string

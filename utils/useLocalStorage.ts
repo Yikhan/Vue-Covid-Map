@@ -8,7 +8,7 @@ function parse (str: string): object {
   return value
 }
 
-function stringify (obj: object): string|null {
+function stringify (obj: object): string | null {
   let value
   try {
     value = JSON.stringify(obj)
@@ -20,14 +20,14 @@ function stringify (obj: object): string|null {
 
 export default function useLocalStorage () {
   function setItem (key: string, value: object) {
-    const result: string|null = stringify(value)
+    const result: string | null = stringify(value)
     if (result) {
       window.localStorage.setItem(key, result)
     }
   }
 
   function getItem (key: string): object {
-    const value: string|null = window.localStorage.getItem(key)
+    const value: string | null = window.localStorage.getItem(key)
     let result: object = {}
     if (value) {
       result = parse(value)
@@ -35,8 +35,14 @@ export default function useLocalStorage () {
     return result
   }
 
+  function removeItem (key: string) {
+    if(!key) return
+    window.localStorage.removeItem(key)
+  }
+
   return {
     setItem,
-    getItem
+    getItem,
+    removeItem
   }
 }

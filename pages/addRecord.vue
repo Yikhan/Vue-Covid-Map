@@ -96,6 +96,7 @@ export default Vue.extend({
         lng: this.form.lng
       })
       console.log(response)
+      alert(`Create request done: ${response.statusText}`)
     },
     onReset(evt: any) {
       evt.preventDefault()
@@ -117,7 +118,7 @@ export default Vue.extend({
     },
     onGenerate(evt: any) {
       this.form.countryName = 'A New Country ' + this.randomInt(0, 1000)
-      this.form.countryCode = 'AAAA'
+      this.form.countryCode = 'AAA'
       this.form.lat = this.randomFloat(-90, 90, 6)
       this.form.lng = this.randomFloat(-180, 180, 6)
       this.form.deaths = this.randomInt(0, 5000)

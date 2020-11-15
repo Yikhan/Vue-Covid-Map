@@ -11,7 +11,7 @@
         :cluster="{ options: { styles: clusterStyles } }"
         :center="currentLocation"
         :options="{ styles: mapStyles }"
-        :zoom="currentLocation.selected ? 4 : 1.5"
+        :zoom="currentLocation.modified ? 4 : 1.5"
         class="map"
       >
         <GMapMarker
@@ -45,6 +45,16 @@
         </GMapMarker>
       </GMap>
     </div>
+
+    <div class="buttons">
+      <b-button 
+        variant="success" 
+        @click="countryResetHandler"
+        :disabled="resetButtonDisable"
+      >
+          Reset Selection
+      </b-button>
+    </div>
   </div>
 </template>
 
@@ -54,6 +64,7 @@ import { mapMutations } from 'vuex'
 import { Context } from '@nuxt/types'
 import { CountryData } from '~/utils/interface'
 import { getAllRecords } from '~/api'
+import { isCountry } from '~/utils/tools'
 import useLocalStorage from '~/utils/useLocalStorage'
 import mapStyles from '~/assets/styles/mapStyles'
 import clusterStyles from '~/assets/styles/clusterStyles'
@@ -75,9 +86,15 @@ export default Vue.extend({
     return {
       countries: [] as CountryData[],
       country: {} as CountryData,
-      currentLocation: { lat: 0, lng: 0 } as CountryData,
+      currentLocation: { lat: 0, lng: 0, modified: false },
       mapStyles,
       clusterStyles
+    }
+  },
+
+  computed: {
+    resetButtonDisable(): boolean {
+      return !this.currentLocation.modified
     }
   },
 
@@ -92,17 +109,40 @@ export default Vue.extend({
       const infoWindow = event.marker.infoWindow
       infoWindow.close(event.map, event.marker)
     },
+    getCountryFromLocal() {
+      this.country = storage.getItem(COUNTRY_KEY) as CountryData
+
+      if (isCountry(this.country)) {
+        this.setCurrentLocation(this.country)
+      }
+    },
+    setCurrentLocation(country: CountryData) {
+      this.currentLocation.lat = country.lat
+      this.currentLocation.lng = country.lng
+      this.currentLocation.modified = true
+    },
+    // event handler functions
     countrySelectHandler(country: CountryData) {
-      this.currentLocation = country
       country.selected = true
+      this.setCurrentLocation(country)
       this.setCountry(country)
       storage.setItem(COUNTRY_KEY, country)
       this.$router.push('/grid')
     },
-    getCountryFromLocal() {
-      this.country = storage.getItem(COUNTRY_KEY) as CountryData
-      this.currentLocation = this.country
-      this.currentLocation.selected = true
+    countryResetHandler() {
+      console.log('reset')
+      storage.removeItem(COUNTRY_KEY)
+
+      // remove country from store
+      if (isCountry(this.country)) {
+        this.setCountry({})
+      }
+
+      this.currentLocation = {
+        lat: 0,
+        lng: 0,
+        modified: false
+      }
     }
   },
 
@@ -129,5 +169,9 @@ export default Vue.extend({
     max-width: 1980px;
     max-height: 1280px;
   }
+}
+.buttons {
+  flex: 1;
+  margin: 20px auto;
 }
 </style>
