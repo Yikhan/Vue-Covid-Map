@@ -129,7 +129,6 @@ export default Vue.extend({
       this.$router.push('/grid')
     },
     countryResetHandler() {
-      console.log('reset')
       storage.removeItem(COUNTRY_KEY)
 
       // remove country from store

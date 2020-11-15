@@ -131,7 +131,6 @@ export default Vue.extend({
         lat: this.form.lat,
         lng: this.form.lng
       })
-      console.log(response)
       alert(`Create request done: ${response.statusText}`)
     },
     onReset(evt: any) {

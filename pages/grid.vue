@@ -92,7 +92,6 @@ export default Vue.extend({
 
   mounted() {
     // scroll to selected country
-    console.log('country selected:', this.country)
     if (this.country.selected) {
       setTimeout(() => {
         this.scrollToRow(this.country)
@@ -174,7 +173,6 @@ export default Vue.extend({
       if (row) {
         row.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }
-      console.log('row find:', row)
     },
     rowClass(item: CountryData, type: string) {
       if (!item || type !== 'row') return
@@ -238,14 +236,12 @@ export default Vue.extend({
     display: flex;
     flex: 1;
     width: 80%;
-
     .table {
       flex: 1;
     }
   }
   .pagination-container {
     display: flex;
-    flex-direction: row;
     flex: 1;
     .pageination {
       flex: 1;

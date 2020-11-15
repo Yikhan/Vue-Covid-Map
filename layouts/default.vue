@@ -22,7 +22,6 @@
       </b-collapse>
     </b-navbar>
 
-    <!-- 子路由出口 -->
     <nuxt-child />
   </div>
 </template>
@@ -35,6 +34,6 @@ export default Vue.extend({})
 
 <style lang="less" scoped>
 .title {
-  color: whitesmoke
+  color: whitesmoke;
 }
 </style>
